@@ -8,14 +8,19 @@
 import SwiftUI
 
 struct MainView: View {
+    var apiWrapper: TMDbAPIWrapper
+    
+    
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        HStack {
+            Button(action: { apiWrapper.performSignIn() }) { Text("Sign in") }
+        }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        let apiWrapper = TMDbAPIWrapper()
+        MainView(apiWrapper: apiWrapper)
     }
 }
