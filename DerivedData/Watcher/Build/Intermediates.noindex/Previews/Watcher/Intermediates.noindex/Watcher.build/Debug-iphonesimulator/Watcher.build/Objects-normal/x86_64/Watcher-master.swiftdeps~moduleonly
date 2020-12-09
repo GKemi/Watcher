@@ -1,0 +1,7 @@
+version: "Apple Swift version 5.3 (swiftlang-1200.0.29.2 clang-1200.0.30.1)"
+options: "3e8971633f478daf0f276a35f5ce15ab"
+build_time: [1607533098, 8392000]
+inputs:
+  "/Users/hakemg01/Documents/iOS/Watcher/Watcher/AppDelegate.swift": [1607532972, 757930259]
+  "/Users/hakemg01/Documents/iOS/Watcher/Watcher/SceneDelegate.swift": [1607533085, 309787594]
+  "/Users/hakemg01/Documents/iOS/Watcher/Watcher/MainView.swift": [1607533085, 319639790]

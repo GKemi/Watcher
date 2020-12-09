@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>logFormatVersion</key>
+	<integer>10</integer>
+	<key>logs</key>
+	<dict>
+		<key>287BDB48-8EAD-481E-B065-A4EAD529AF78</key>
+		<dict>
+			<key>className</key>
+			<string>IDEActivityLogSection</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>287BDB48-8EAD-481E-B065-A4EAD529AF78.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>S</string>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>Watcher project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>Watcher</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Build for Previews Watcher</string>
+			<key>timeStartedRecording</key>
+			<real>629225826.60790706</real>
+			<key>timeStoppedRecording</key>
+			<real>629225842.36091304</real>
+			<key>title</key>
+			<string>Build for Previews Watcher</string>
+			<key>uniqueIdentifier</key>
+			<string>287BDB48-8EAD-481E-B065-A4EAD529AF78</string>
+		</dict>
+		<key>BA40EDA5-EFAA-4D74-94AA-108D987D2432</key>
+		<dict>
+			<key>className</key>
+			<string>IDEActivityLogSection</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>BA40EDA5-EFAA-4D74-94AA-108D987D2432.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>S</string>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>Watcher project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>Watcher</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Build for Previews Watcher</string>
+			<key>timeStartedRecording</key>
+			<real>629225897.83765304</real>
+			<key>timeStoppedRecording</key>
+			<real>629225899.56198704</real>
+			<key>title</key>
+			<string>Build for Previews Watcher</string>
+			<key>uniqueIdentifier</key>
+			<string>BA40EDA5-EFAA-4D74-94AA-108D987D2432</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
