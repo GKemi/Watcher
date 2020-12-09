@@ -7,7 +7,7 @@
 
 import Foundation
 import TMDBSwift
-
+import AuthenticationServices
 
 class TMDbAPIWrapper {
     init() {
@@ -19,15 +19,14 @@ class TMDbAPIWrapper {
         
         URLSession.shared.dataTask(with: request) { data, response, _ in
             if let data = data {
-                print(String(data: data, encoding: .utf8))
+                ASWebAuthenticationSession.
             }
         }.resume()
     }
 }
 
 //Request a request token
-//1. Perform an API request to: https://api.themoviedb.org/3/authentication/token/new?api_key=<<api_key>>
-
+//1. Load the following URL (either in a SFSafari ViewController or ASWebAuthenticationSession): https://www.themoviedb.org/authenticate/{REQUEST_TOKEN}?redirect_to=http://www.yourapp.com/approved
 extension TMDbAPIWrapper {
     var baseURL: URLComponents {
         var components = URLComponents()
