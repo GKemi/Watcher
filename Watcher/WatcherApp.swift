@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import TMDBSwift
 
 @main
 struct WatcherApp: App {

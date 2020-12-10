@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import WebKit
 
 struct MainView: View {
-    var apiWrapper: TMDbAPIWrapper
+    @ObservedObject var apiWrapper: TMDbAPIWrapper
     
     
     var body: some View {
@@ -16,6 +17,7 @@ struct MainView: View {
             Button(action: { apiWrapper.performSignIn() }) { Text("Sign in") }
         }
     }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {

@@ -3,31 +3,116 @@
 //  Watcher
 //
 //  Created by Gil Hakemi on 09/12/2020.
-//
 
 import Foundation
-import TMDBSwift
+import Combine
 import AuthenticationServices
 
-class TMDbAPIWrapper {
-    init() {
-        TMDBConfig.apikey = apiKey
-    }
-    
+class TMDbAPIWrapper: NSObject, ObservableObject, ASWebAuthenticationPresentationContextProviding {
+        
     func performSignIn() {
-        let request = URLRequest(url: authenticationPath)
+        let request = URLRequest(url: requestTokenPath)
         
         URLSession.shared.dataTask(with: request) { data, response, _ in
             if let data = data {
-                ASWebAuthenticationSession.
+                let requestToken = try? JSONDecoder().decode(RequestTokenResponse.self, from: data)
+                self.signIn(requestToken: requestToken?.token ?? "")
             }
         }.resume()
     }
+    
+    var subscriptions = Set<AnyCancellable>()
+    
+    func signIn(requestToken: String) {
+        let signInPromise = Future<Void, Error> { completion in
+            let authUrl = self.authenticationURL(with: requestToken)
+
+            let authSession = ASWebAuthenticationSession(
+                url: authUrl,
+                callbackURLScheme: "hackemi://hackemi.co.uk") { (url, error) in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else if url != nil {
+                        completion(.success(()))
+                    }
+            }
+
+            authSession.presentationContextProvider = self
+            authSession.prefersEphemeralWebBrowserSession = true
+            authSession.start()
+        }
+
+        signInPromise.sink { (completion) in
+            switch completion {
+            case .failure(let error):
+                print(error)
+            default: break
+            }
+        } receiveValue: { _ in
+            self.requestSessionID(with: requestToken)
+        }
+        .store(in: &subscriptions)
+    }
+    
+    func requestSessionID(with requestToken: String) {
+        var request = URLRequest(url: sessionIDUrl())
+        request.httpMethod = "POST"
+//        request.setValue("application/json", forHTTPHeaderField: "Content-type")
+        let requestBody = try! JSONEncoder().encode(RequestTokenResponse(token: requestToken))
+        request.httpBody = requestBody
+        
+        URLSession.shared.dataTask(with: request) { data, _, error in
+            print(String(data: data!, encoding: .utf8))
+//            let sessionIDResponse = try! JSONDecoder().decode(SessionIDResponse.self, from: data!)
+//            self.getAccountDetails(with: sessionIDResponse.sessionID)
+        }.resume()
+    }
+    
+    func getAccountDetails(with sessionID: String) {
+        let url = accountDetailsURL(sessionID: sessionID)
+        
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let data = data {
+                let accountDetails = try! JSONDecoder().decode(AccountResponse.self, from: data)
+                
+                print(accountDetails.username)
+            }
+        }.resume()
+    }
+    
+    func getFavouriteMovies(_ sessionID: String, _ accountID: Int) {
+        
+    }
+    
+    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        return ASPresentationAnchor()
+    }
 }
 
-//Request a request token
-//1. Load the following URL (either in a SFSafari ViewController or ASWebAuthenticationSession): https://www.themoviedb.org/authenticate/{REQUEST_TOKEN}?redirect_to=http://www.yourapp.com/approved
-extension TMDbAPIWrapper {
+struct RequestTokenResponse: Codable {
+    let token: String
+    
+    enum CodingKeys: String, CodingKey {
+        case token = "request_token"
+    }
+}
+
+struct SessionIDResponse: Codable {
+    let success: Bool
+    let sessionID: String
+    
+    enum CodingKeys: String, CodingKey {
+        case success = "success"
+        case sessionID = "session_id"
+    }
+}
+
+struct AccountResponse: Codable {
+    let id: Int
+    let username: String
+}
+
+private extension TMDbAPIWrapper {
     var baseURL: URLComponents {
         var components = URLComponents()
         components.scheme = "https"
@@ -36,7 +121,15 @@ extension TMDbAPIWrapper {
         return components
     }
     
-    var authenticationPath: URL {
+    var baseAuthURL: URLComponents {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "themoviedb.org"
+        
+        return components
+    }
+    
+    var requestTokenPath: URL {
         var authenticationURL = baseURL
         authenticationURL.path = "/3/authentication/token/new"
         let apiKeyQuery = URLQueryItem(name: "api_key", value: apiKey)
@@ -45,5 +138,42 @@ extension TMDbAPIWrapper {
         ]
         
         return authenticationURL.url!
+    }
+    
+    func authenticationURL(with requestToken: String) -> URL {
+        var authenticationURL = baseAuthURL
+        authenticationURL.path = "/authenticate/\(requestToken)"
+        let callbackURI = URLQueryItem(name: "redirect_to", value: "hackemi://hackemi.co.uk")
+        authenticationURL.queryItems = [
+            callbackURI
+        ]
+        
+        return authenticationURL.url!
+    }
+    
+    func sessionIDUrl() -> URL {
+        var sessionID = baseURL
+        sessionID.path = "/authentication/session/new"
+        sessionID.queryItems = [
+            URLQueryItem(name: "api_key", value: apiKey)
+        ]
+        
+        return sessionID.url!
+    }
+    
+    func accountDetailsURL(sessionID: String) -> URL {
+        var accountDetails = baseURL
+        accountDetails.path = "/account"
+        accountDetails.queryItems = [
+            URLQueryItem(name: "api_key", value: apiKey),
+            URLQueryItem(name: "session_id", value: sessionID)
+        ]
+        
+        return accountDetails.url!
+    }
+    
+    func favouriteMoviesURL() {
+        var favouriteMovies = baseURL
+        favouriteMovies.path = ""
     }
 }
