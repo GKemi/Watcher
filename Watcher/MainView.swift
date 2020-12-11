@@ -22,7 +22,8 @@ struct MainView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        let apiWrapper = TMDbAPIWrapper()
+        let authenticator = TMDbAuthenticator()
+        let apiWrapper = TMDbAPIWrapper(authenticator: authenticator)
         MainView(apiWrapper: apiWrapper)
     }
 }

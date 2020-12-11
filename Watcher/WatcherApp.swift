@@ -12,7 +12,8 @@ import TMDBSwift
 struct WatcherApp: App {
     var body: some Scene {
         WindowGroup {
-            let apiWrapper = TMDbAPIWrapper()
+            let authenticator = TMDbAuthenticator()
+            let apiWrapper = TMDbAPIWrapper(authenticator: authenticator)
             MainView(apiWrapper: apiWrapper)
         }
     }
