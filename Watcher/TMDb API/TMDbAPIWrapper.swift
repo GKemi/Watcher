@@ -57,14 +57,15 @@ class TMDbAPIWrapper: NSObject, ObservableObject, ASWebAuthenticationPresentatio
     func requestSessionID(with requestToken: String) {
         var request = URLRequest(url: sessionIDUrl())
         request.httpMethod = "POST"
-//        request.setValue("application/json", forHTTPHeaderField: "Content-type")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         let requestBody = try! JSONEncoder().encode(RequestTokenResponse(token: requestToken))
         request.httpBody = requestBody
         
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            print(String(data: data!, encoding: .utf8))
-//            let sessionIDResponse = try! JSONDecoder().decode(SessionIDResponse.self, from: data!)
-//            self.getAccountDetails(with: sessionIDResponse.sessionID)
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let data = data {
+                let sessionIDResponse = try! JSONDecoder().decode(SessionIDResponse.self, from: data)
+                self.getAccountDetails(with: sessionIDResponse.sessionID)
+            }
         }.resume()
     }
     
@@ -153,7 +154,7 @@ private extension TMDbAPIWrapper {
     
     func sessionIDUrl() -> URL {
         var sessionID = baseURL
-        sessionID.path = "/authentication/session/new"
+        sessionID.path = "/3/authentication/session/new"
         sessionID.queryItems = [
             URLQueryItem(name: "api_key", value: apiKey)
         ]
@@ -163,7 +164,7 @@ private extension TMDbAPIWrapper {
     
     func accountDetailsURL(sessionID: String) -> URL {
         var accountDetails = baseURL
-        accountDetails.path = "/account"
+        accountDetails.path = "/3/account"
         accountDetails.queryItems = [
             URLQueryItem(name: "api_key", value: apiKey),
             URLQueryItem(name: "session_id", value: sessionID)
