@@ -11,7 +11,7 @@ class TMDbAPIWrapper: ObservableObject {
 //    @Published favouriteMovies = [Movie]()
     
     var authenticator: TMDbAuthenticator
-    var account: AccountDetails?
+    var sessionID: SessionIDResponse?
     
     init(authenticator: TMDbAuthenticator) {
         self.authenticator = authenticator
@@ -23,16 +23,31 @@ class TMDbAPIWrapper: ObservableObject {
             case .failure(let error):
                 print(error)
                 break
-            case .success(let account):
-                self.account = account
-                print("Account details got returned!")
+            case .success(let sessionID):
+                self.sessionID = sessionID
+                self.getFavouriteMovies()
                 break
             }
         }
     }
     
-    func getFavouriteMovies(_ sessionID: String, _ accountID: Int) {
+    func getFavouriteMovies() {
+        guard let sessionID = sessionID else {
+            print("No sessionID available")
+            return
+        }
         
+        let url = favouriteMoviesURL(with: sessionID.sessionID)
+        
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            if let data = data {
+                let favouriteMovies = try? JSONDecoder().decode(FavouriteMovies.self, from: data)
+                
+                if let favouriteMovies = favouriteMovies {
+                    favouriteMovies.results.forEach { print($0.title) }
+                }
+            }
+        }.resume()
     }
 
 }
@@ -46,8 +61,24 @@ private extension TMDbAPIWrapper {
         return components
     }
     
-    func favouriteMoviesURL() {
+    func favouriteMoviesURL(with sessionID: String) -> URL {
         var favouriteMovies = baseURL
-        favouriteMovies.path = ""
+        favouriteMovies.path = "/3/account/0/favorite/movies"
+        favouriteMovies.queryItems = [
+            URLQueryItem(name: "api_key", value: apiKey),
+            URLQueryItem(name: "session_id", value: sessionID)
+        ]
+        
+        return favouriteMovies.url!
     }
 }
+
+struct FavouriteMovies: Codable {
+    var results: [Movie]
+    let totalPages: Int
+    
+    struct Movie: Codable {
+        let title: String
+    }
+}
+

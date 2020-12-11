@@ -12,9 +12,9 @@ import AuthenticationServices
 
 class TMDbAuthenticator: NSObject {
     var subscriptions = Set<AnyCancellable>()
-    var signInResult: ((Result<AccountDetails, Error>) -> ())?
+    var signInResult: ((Result<SessionIDResponse, Error>) -> ())?
     
-    func performSignIn(signInResult: @escaping (Result<AccountDetails, Error>) -> ()) {
+    func performSignIn(signInResult: @escaping (Result<SessionIDResponse, Error>) -> ()) {
         self.signInResult = signInResult
         let request = URLRequest(url: requestTokenPath)
         
@@ -67,7 +67,8 @@ class TMDbAuthenticator: NSObject {
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let data = data {
                 let sessionIDResponse = try! JSONDecoder().decode(SessionIDResponse.self, from: data)
-                self.getAccountDetails(with: sessionIDResponse.sessionID)
+                self.signInResult?(.success(sessionIDResponse))
+//                self.getAccountDetails(with: sessionIDResponse.sessionID)
             }
         }.resume()
     }
@@ -79,7 +80,7 @@ class TMDbAuthenticator: NSObject {
             if let data = data {
                 let accountDetails = try! JSONDecoder().decode(AccountDetails.self, from: data)
                 
-                self.signInResult?(.success(accountDetails))
+//                self.signInResult?(.success(accountDetails))
             }
         }.resume()
     }
